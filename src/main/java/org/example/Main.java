@@ -1,5 +1,6 @@
 package org.example;
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,10 +17,13 @@ public class Main {
         String password = "";
 
 
+
+
         try (Connection conn = DriverManager.getConnection(url + dbName, userName, password);
             Statement stmt = conn.createStatement())
         {
             System.out.println("\nConnected to the database.");
+            Scanner Keyboard = new Scanner(System.in);
 
             //Display Expenses Table
             displayExpenses(stmt);
@@ -28,7 +32,18 @@ public class Main {
             totalAmount(stmt);
 
             //Adding New Row to Expense Table
-            addExpense(conn, "Phone Bill", "Utilities", 20.00, Date.valueOf("2025-01-15") );
+            Expense userInput = addInput(Keyboard);
+            addExpense(conn, userInput);
+
+            //Display Updated Table
+            displayExpenses(stmt);
+
+            //Deleting a Row From the Expense Table
+            System.out.println("Please enter an expense ID to be deleted: ");
+            int delete_id = Keyboard.nextInt();
+            deleteExpense(conn, delete_id);
+
+            displayExpenses(stmt);
 
             System.out.println("\nFinished - Disconnected from database");
         }
@@ -74,17 +89,54 @@ public class Main {
         }
     }
 
+    //Ask User to Input Add Details
+    //https://stackoverflow.com/questions/28114532/how-to-use-keyboard-input-in-a-method
+    private Expense addInput(Scanner Keyboard)
+    {
+        System.out.println("Please enter your expense details\n\n");
+        System.out.println("Enter expense Title: ");
+        String expenseTitle = Keyboard.nextLine();
+        System.out.println("Enter expense Category: ");
+        String expenseCategory = Keyboard.nextLine();
+        System.out.println("Enter expense Amount: ");
+        double expenseAmount = Keyboard.nextDouble();
+        System.out.println("Enter expense Date: ");
+        String expenseDate = Keyboard.nextLine();
+
+        return new Expense(expenseTitle, expenseCategory, expenseAmount, Date.valueOf(expenseDate));
+    }
+
     //Method to Add a New Expense
-    private void addExpense(Connection conn, String title, String category, double amount, Date date) throws SQLException
+    private void addExpense(Connection conn, Expense expense) throws SQLException
     {
         String addQuery = "INSERT INTO expenses (TITLE, CATEGORY, AMOUNT, EXPENSE_DATE) VALUES (?,?,?,?)";
 
         try(PreparedStatement add = conn.prepareStatement(addQuery))
         {
-            add.setString(1, title);
-            add.setString(2, category);
-            add.setDouble(3, amount);
-            add.setDate(4, date);
+            add.setString(1, expense.getTitle());
+            add.setString(2, expense.getCategory());
+            add.setDouble(3, expense.getAmount());
+            add.setDate(4, expense.getDate());
+        }
+    }
+
+    //Method to Delete an Expense
+    private void deleteExpense(Connection conn, int id) throws SQLException
+    {
+        String deleteQuery = "DELETE FROM expenses WHERE EXPENSE_ID = ?";
+
+        try(PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery))
+        {
+            deleteStmt.setInt(1, id);
+            int rowsAffected = deleteStmt.executeUpdate();
+            if (rowsAffected > 0)
+            {
+                System.out.println("Expense with ID: " + id + " was deleted.");
+            }
+            else
+            {
+                System.out.println("Expense with ID: " + id + " was not found.");
+            }
         }
     }
 }
