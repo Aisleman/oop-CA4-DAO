@@ -19,10 +19,9 @@ public class ExpenseDAO
             double amount = display.getDouble("AMOUNT");
             Date date = display.getDate("EXPENSE_DATE");
 
-            System.out.print("ID: " + expenseID + " ");
-            System.out.print("Title: " + title + " ");
-            System.out.print("Category: " + category + " ");
-            System.out.print("Amount: " + amount + " ");
+            System.out.print("Title: " + title + " | ");
+            System.out.print("Category: " + category + " | ");
+            System.out.print("Amount: " + amount + " | ");
             System.out.println("Date: " + date);
         }
     }

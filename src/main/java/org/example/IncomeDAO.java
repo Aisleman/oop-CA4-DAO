@@ -16,11 +16,10 @@ public class IncomeDAO
             int incomeID = display.getInt("INCOME_ID");
             String title = display.getString("TITLE");
             double amount = display.getDouble("AMOUNT");
-            Date date = display.getDate("DATE_EARNED");
+            Date date = display.getDate("PAY_DATE");
 
-            System.out.print("ID: " + incomeID + " ");
-            System.out.print("Title: " + title + " ");
-            System.out.print("Amount: " + amount + " ");
+            System.out.print("Title: " + title + " | ");
+            System.out.print("Amount: " + amount + " | ");
             System.out.println("Date: " + date);
         }
     }
@@ -58,7 +57,7 @@ public class IncomeDAO
     //Method to Add a New Income
     public static void addIncome(Connection conn, Income income) throws SQLException
     {
-        String addQuery = "INSERT INTO income (TITLE, AMOUNT, DATE_EARNED) VALUES (?,?,?)";
+        String addQuery = "INSERT INTO income (TITLE, AMOUNT, PAY_DATE) VALUES (?,?,?)";
 
         try(PreparedStatement add = conn.prepareStatement(addQuery))
         {

@@ -131,41 +131,39 @@ public class Main {
                 double amount = expenseData.getDouble("AMOUNT");
                 Date date = expenseData.getDate("EXPENSE_DATE");
 
-                System.out.print("ID: " + expenseID + " ");
-                System.out.print("Title: " + title + " ");
-                System.out.print("Category: " + category + " ");
-                System.out.print("Amount: " + amount + " ");
+                System.out.print("Title: " + title + " | ");
+                System.out.print("Category: " + category + " | ");
+                System.out.print("Amount: " + amount + " | ");
                 System.out.println("Date: " + date);
 
                 totalExpenses += amount;
             }
 
-            String sql2 = "SELECT * FROM income WHERE DATE_FORMAT(DATE_EARNED, '%Y-%m') = ?" ;
+            String sql2 = "SELECT * FROM income WHERE DATE_FORMAT(PAY_DATE, '%Y-%m') = ?" ;
             try(PreparedStatement incomeStmt = conn.prepareStatement(sql2)) {
-                expenseStmt.setString(1, selectedDate);
-                ResultSet incomeData = expenseStmt.executeQuery();
+                incomeStmt.setString(1, selectedDate);
+                ResultSet incomeData = incomeStmt.executeQuery();
 
                 double totalIncome = 0;
 
                 System.out.println("\nThe Income for " + selectedDate + " is: ");
                 System.out.println("---------------------------------------------");
-                while (expenseData.next()) {
-                    int incomeID = incomeData.getInt("EXPENSE_ID");
+                while (incomeData.next()) {
+                    int incomeID = incomeData.getInt("INCOME_ID");
                     String title = incomeData.getString("TITLE");
                     double amount = incomeData.getDouble("AMOUNT");
-                    Date date = incomeData.getDate("DATE_EARNED");
+                    Date date = incomeData.getDate("PAY_DATE");
 
-                    System.out.print("ID: " + incomeID + " ");
-                    System.out.print("Title: " + title + " ");
-                    System.out.print("Amount: " + amount + " ");
+                    System.out.print("Title: " + title + " | ");
+                    System.out.print("Amount: " + amount + " | ");
                     System.out.println("Date: " + date);
 
                     totalIncome += amount;
                 }
 
                 double balance = totalIncome - totalExpenses;
+                System.out.println("\nFinancial Sumaary for " +selectedDate);
                 System.out.println("---------------------------------------------");
-                System.out.println("Financial Sumaary for " +selectedDate);
                 System.out.println("Total Income: " + totalIncome);
                 System.out.println("Total Expenses: " + totalExpenses);
                 System.out.println("Balance: " + balance);
