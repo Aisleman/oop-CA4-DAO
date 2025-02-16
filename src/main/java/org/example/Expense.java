@@ -3,10 +3,10 @@ import java.sql.*;
 
 public class Expense
 {
-    private String title;
-    private String category;
-    private double amount;
-    private Date date;
+    private final String title;
+    private final String category;
+    private final double amount;
+    private final Date date;
 
     //Constructor
     public Expense(String title, String category, double amount, Date date)
